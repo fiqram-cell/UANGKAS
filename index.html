@@ -135,10 +135,13 @@
         }
 
         th, td {
-            padding: 12px 8px;
+            padding: 12px;
             text-align: center;
             border: 1px solid #dee2e6;
             font-size: 14px;
+            width: 80px; /* Ukuran tetap untuk semua kolom */
+            min-width: 80px;
+            max-width: 80px;
         }
 
         th {
@@ -154,7 +157,9 @@
             background: #f8f9fa;
             font-weight: 600;
             text-align: left;
+            width: 120px; /* Sedikit lebih lebar untuk nama */
             min-width: 120px;
+            max-width: 120px;
             position: sticky;
             left: 0;
             z-index: 5;
@@ -234,8 +239,17 @@
             }
             
             th, td {
-                padding: 8px 4px;
+                padding: 8px;
                 font-size: 12px;
+                width: 70px;
+                min-width: 70px;
+                max-width: 70px;
+            }
+            
+            .nama-col {
+                width: 100px;
+                min-width: 100px;
+                max-width: 100px;
             }
             
             .container {
@@ -250,12 +264,17 @@
 
         @media (max-width: 480px) {
             th, td {
-                padding: 6px 2px;
+                padding: 6px;
                 font-size: 11px;
+                width: 60px;
+                min-width: 60px;
+                max-width: 60px;
             }
             
             .nama-col {
+                width: 80px;
                 min-width: 80px;
+                max-width: 80px;
             }
         }
     </style>
@@ -294,18 +313,18 @@
                 <thead>
                     <tr>
                         <th class="nama-col">Nama</th>
-                        <th>Januari 25</th><th>Ket</th>
-                        <th>Februari 25</th><th>Ket</th>
-                        <th>Maret 25</th><th>Ket</th>
-                        <th>April 25</th><th>Ket</th>
-                        <th>Mei 25</th><th>Ket</th>
-                        <th>Juni 25</th><th>Ket</th>
-                        <th>Juli 25</th><th>Ket</th>
-                        <th>Agustus 25</th><th>Ket</th>
-                        <th>September 25</th><th>Ket</th>
-                        <th>Oktober 25</th><th>Ket</th>
-                        <th>November 25</th><th>Ket</th>
-                        <th>Desember 25</th><th>Ket</th>
+                        <th>Januari 2025</th><th>Ket</th>
+                        <th>Februari 2025</th><th>Ket</th>
+                        <th>Maret 2025</th><th>Ket</th>
+                        <th>April 2025</th><th>Ket</th>
+                        <th>Mei 2025</th><th>Ket</th>
+                        <th>Juni 2025</th><th>Ket</th>
+                        <th>Juli 2025</th><th>Ket</th>
+                        <th>Agustus 2025</th><th>Ket</th>
+                        <th>September 2025</th><th>Ket</th>
+                        <th>Oktober 2025</th><th>Ket</th>
+                        <th>November 2025</th><th>Ket</th>
+                        <th>Desember 2025</th><th>Ket</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
