@@ -286,7 +286,7 @@
             
             <div class="stats" id="statsContainer"></div>
             
-            <button class="btn btn-success" onclick="downloadTable()">📥 Download Tabel Excel</button>
+            <button class="btn btn-success" onclick="downloadTable()">📸 Download Screenshot Tabel</button>
         </div>
 
         <div class="table-container">
@@ -314,7 +314,7 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // Data awal dari tabel yang diberikan
         let paymentData = {
@@ -540,23 +540,38 @@
         }
 
         function downloadTable() {
-            // Ambil tabel langsung dari HTML yang terlihat di website
+            // Capture tabel sebagai gambar/foto
             const table = document.getElementById('paymentTable');
             
-            // Buat workbook Excel menggunakan SheetJS
-            const wb = XLSX.utils.book_new();
+            // Opsi untuk html2canvas
+            const options = {
+                scale: 2, // Kualitas tinggi
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                width: table.scrollWidth,
+                height: table.scrollHeight,
+                scrollX: 0,
+                scrollY: 0
+            };
             
-            // Konversi tabel HTML langsung ke worksheet
-            const ws = XLSX.utils.table_to_sheet(table);
-            
-            // Tambahkan worksheet ke workbook
-            XLSX.utils.book_append_sheet(wb, ws, "Data Pembayaran Asrama");
-            
-            // Download file Excel
-            const fileName = `data_pembayaran_asrama_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            
-            showAlert('Tabel Excel berhasil didownload!', 'success');
+            // Capture tabel
+            html2canvas(table, options).then(canvas => {
+                // Buat link download
+                const link = document.createElement('a');
+                link.download = `tabel_pembayaran_asrama_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showAlert('Screenshot tabel berhasil didownload!', 'success');
+            }).catch(error => {
+                console.error('Error capturing table:', error);
+                showAlert('Gagal mengambil screenshot tabel', 'danger');
+            });
         }
 
         // Inisialisasi aplikasi
