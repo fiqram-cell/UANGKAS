@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencatatan Keuangan Asrama</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(86, 171, 47, 0.4);
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        th, td {
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nama-col {
+            background: #f8f9fa;
+            font-weight: 600;
+            text-align: left;
+            min-width: 120px;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .lunas {
+            background: #d4edda !important;
+            color: #155724;
+        }
+
+        .belum-lunas {
+            background: #f8d7da !important;
+            color: #721c24;
+        }
+
+        .partial {
+            background: #fff3cd !important;
+            color: #856404;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-group {
+                flex-direction: column;
+            }
+            
+            .form-control {
+                min-width: 100%;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            th, td {
+                padding: 6px 2px;
+                font-size: 11px;
+            }
+            
+            .nama-col {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Pencatatan Keuangan Asrama</h1>
+            <p>Sistem manajemen pembayaran bulanan penghuni asrama</p>
+        </div>
+
+        <div class="controls">
+            <div class="form-group">
+                <div class="form-control">
+                    <label for="namaSelect">Pilih Nama:</label>
+                    <select id="namaSelect">
+                        <option value="">-- Pilih Nama --</option>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label for="jumlahBayar">Jumlah Pembayaran (Rp):</label>
+                    <input type="number" id="jumlahBayar" placeholder="Masukkan jumlah" min="0">
+                </div>
+                <button class="btn btn-primary" onclick="tambahPembayaran()">Tambah Pembayaran</button>
+            </div>
+            
+            <div id="alertContainer"></div>
+            
+            <div class="stats" id="statsContainer"></div>
+            
+            <button class="btn btn-success" onclick="downloadTable()">📥 Download Tabel Excel</button>
+        </div>
+
+        <div class="table-container">
+            <table id="paymentTable">
+                <thead>
+                    <tr>
+                        <th class="nama-col">Nama</th>
+                        <th>Januari 25</th><th>Ket</th>
+                        <th>Februari 25</th><th>Ket</th>
+                        <th>Maret 25</th><th>Ket</th>
+                        <th>April 25</th><th>Ket</th>
+                        <th>Mei 25</th><th>Ket</th>
+                        <th>Juni 25</th><th>Ket</th>
+                        <th>Juli 25</th><th>Ket</th>
+                        <th>Agustus 25</th><th>Ket</th>
+                        <th>September 25</th><th>Ket</th>
+                        <th>Oktober 25</th><th>Ket</th>
+                        <th>November 25</th><th>Ket</th>
+                        <th>Desember 25</th><th>Ket</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // Data awal dari tabel yang diberikan
+        let paymentData = {
+            'Aan': [35, 35, 35, 35, 18, 0, 0, 0, 0, 0, 0, 0],
+            'Adam': [35, 35, 35, 35, 9, 0, 0, 0, 0, 0, 0, 0],
+            'Akmal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Ansar': [50, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Arul': [35, 35, 35, 35, 35, 0, 0, 0, 0, 0, 0, 0],
+            'Arzad': [35, 35, 35, 35, 32, 0, 0, 0, 0, 0, 0, 0],
+            'Asraf': [10, 35, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Dwiky': [35, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Erfan': [35, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Fajrin': [35, 35, 35, 35, 32, 0, 0, 0, 0, 0, 0, 0],
+            'Fathurrahman': [23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Fiqram': [35, 35, 35, 35, 35, 8, 0, 0, 0, 0, 0, 0],
+            'Hamdani': [33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Ibnu sabil': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Ipping': [35, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Iqbal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Jamil': [35, 35, 35, 35, 12, 0, 0, 0, 0, 0, 0, 0],
+            'Johan': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Khalik': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Mahfud': [35, 35, 35, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Muhlis': [35, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Ridho': [35, 35, 35, 35, 11, 0, 0, 0, 0, 0, 0, 0],
+            'Rival': [10, 35, 35, 35, 34, 0, 0, 0, 0, 0, 0, 0],
+            'Rivaldi': [9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Suhail': [35, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Wahid': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Yusran': [35, 35, 35, 22, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Zauqi': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Zul': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Dile': [50, 50, 50, 9, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0]
+        };
+
+        // Nama-nama yang harus bayar 50k
+        const specialNames = ['Dile', 'Muh Ering', 'Ibnu sabil', 'Akmal', 'Ansar'];
+        
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        function initializeApp() {
+            // Cek apakah ada data tersimpan di sessionStorage
+            const savedData = sessionStorage.getItem('asramaPaymentData');
+            if (savedData) {
+                try {
+                    paymentData = JSON.parse(savedData);
+                } catch (e) {
+                    console.log('Error loading saved data, using default data');
+                }
+            }
+            
+            populateNameSelect();
+            renderTable();
+            updateStats();
+        }
+
+        function saveData() {
+            // Simpan data ke sessionStorage agar tidak hilang saat refresh
+            sessionStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
+        }
+
+        function populateNameSelect() {
+            const select = document.getElementById('namaSelect');
+            const sortedNames = Object.keys(paymentData).sort();
+            
+            sortedNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        }
+
+        function getTargetAmount(name) {
+            return specialNames.includes(name) ? 50 : 35;
+        }
+
+        function getStatus(name, monthIndex) {
+            const amount = paymentData[name][monthIndex];
+            const target = getTargetAmount(name);
+            
+            if (amount >= target) return 'lunas';
+            if (amount > 0) return 'partial';
+            return 'belum-lunas';
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            Object.keys(paymentData).sort().forEach(name => {
+                const row = document.createElement('tr');
+                
+                // Kolom nama
+                const nameCell = document.createElement('td');
+                nameCell.className = 'nama-col';
+                nameCell.textContent = name;
+                row.appendChild(nameCell);
+
+                // Kolom bulan dan keterangan
+                for (let i = 0; i < 12; i++) {
+                    // Kolom pembayaran
+                    const paymentCell = document.createElement('td');
+                    const amount = paymentData[name][i];
+                    paymentCell.textContent = amount > 0 ? `Rp. ${amount}` : '';
+                    row.appendChild(paymentCell);
+
+                    // Kolom keterangan
+                    const statusCell = document.createElement('td');
+                    const status = getStatus(name, i);
+                    statusCell.className = status;
+                    
+                    if (amount > 0) {
+                        const target = getTargetAmount(name);
+                        if (amount >= target) {
+                            statusCell.style.backgroundColor = '#d4edda';
+                        } else {
+                            statusCell.style.backgroundColor = '#fff3cd';
+                        }
+                    }
+                    
+                    row.appendChild(statusCell);
+                }
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function tambahPembayaran() {
+            const namaSelect = document.getElementById('namaSelect');
+            const jumlahInput = document.getElementById('jumlahBayar');
+            
+            const nama = namaSelect.value;
+            const jumlah = parseInt(jumlahInput.value);
+
+            if (!nama) {
+                showAlert('Pilih nama terlebih dahulu!', 'danger');
+                return;
+            }
+
+            if (!jumlah || jumlah <= 0) {
+                showAlert('Masukkan jumlah pembayaran yang valid!', 'danger');
+                return;
+            }
+
+            // Proses pembayaran otomatis
+            let sisaJumlah = jumlah;
+            const target = getTargetAmount(nama);
+
+            for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
+                const currentAmount = paymentData[nama][i];
+                const needed = target - currentAmount;
+
+                if (needed > 0) {
+                    const toAdd = Math.min(sisaJumlah, needed);
+                    paymentData[nama][i] += toAdd;
+                    sisaJumlah -= toAdd;
+                }
+            }
+
+            // Jika masih ada sisa, tambahkan ke bulan selanjutnya
+            if (sisaJumlah > 0) {
+                for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
+                    if (paymentData[nama][i] >= target) {
+                        const toAdd = Math.min(sisaJumlah, target);
+                        paymentData[nama][i] += toAdd;
+                        sisaJumlah -= toAdd;
+                        break;
+                    }
+                }
+            }
+
+            renderTable();
+            updateStats();
+            saveData(); // Simpan data setelah update
+            
+            jumlahInput.value = '';
+            namaSelect.value = '';
+            
+            showAlert(`Pembayaran Rp. ${jumlah.toLocaleString('id-ID')} untuk ${nama} berhasil ditambahkan!`, 'success');
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            container.innerHTML = '';
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function updateStats() {
+            const container = document.getElementById('statsContainer');
+            let totalPendapatan = 0;
+
+            Object.keys(paymentData).forEach(name => {
+                let namaTotalPendapatan = 0;
+
+                for (let i = 0; i < 12; i++) {
+                    const amount = paymentData[name][i];
+                    namaTotalPendapatan += amount;
+                }
+
+                totalPendapatan += namaTotalPendapatan;
+            });
+
+            container.innerHTML = `
+                <div class="stat-card">
+                    <h3>Rp. ${totalPendapatan.toLocaleString('id-ID')}</h3>
+                    <p>Total Pendapatan</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${Object.keys(paymentData).length}</h3>
+                    <p>Total Penghuni</p>
+                </div>
+            `;
+        }
+
+        function downloadTable() {
+            // Ambil tabel langsung dari HTML yang terlihat di website
+            const table = document.getElementById('paymentTable');
+            
+            // Buat workbook Excel menggunakan SheetJS
+            const wb = XLSX.utils.book_new();
+            
+            // Konversi tabel HTML langsung ke worksheet
+            const ws = XLSX.utils.table_to_sheet(table);
+            
+            // Tambahkan worksheet ke workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Data Pembayaran Asrama");
+            
+            // Download file Excel
+            const fileName = `data_pembayaran_asrama_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            
+            showAlert('Tabel Excel berhasil didownload!', 'success');
+        }
+
+        // Inisialisasi aplikasi
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Event listener untuk Enter key
+        document.getElementById('jumlahBayar').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                tambahPembayaran();
+            }
+        });
+    </script>
+</body>
+</html>
