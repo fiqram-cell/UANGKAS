@@ -376,8 +376,8 @@
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
         function initializeApp() {
-            // Cek apakah ada data tersimpan di sessionStorage
-            const savedData = sessionStorage.getItem('asramaPaymentData');
+            // Cek apakah ada data tersimpan di localStorage
+            const savedData = localStorage.getItem('asramaPaymentData');
             if (savedData) {
                 try {
                     paymentData = JSON.parse(savedData);
@@ -392,8 +392,8 @@
         }
 
         function saveData() {
-            // Simpan data ke sessionStorage agar tidak hilang saat refresh
-            sessionStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
+            // Simpan data ke localStorage agar tidak hilang saat menutup browser
+            localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
         }
 
         function populateNameSelect() {
