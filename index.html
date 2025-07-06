@@ -97,6 +97,8 @@
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
 
         .btn-primary {
@@ -119,6 +121,26 @@
             box-shadow: 0 5px 15px rgba(86, 171, 47, 0.4);
         }
 
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
         .table-container {
             padding: 30px;
             overflow-x: auto;
@@ -139,7 +161,7 @@
             text-align: center;
             border: 1px solid #dee2e6;
             font-size: 14px;
-            width: 80px; /* Ukuran tetap untuk semua kolom */
+            width: 80px;
             min-width: 80px;
             max-width: 80px;
         }
@@ -157,7 +179,7 @@
             background: #f8f9fa;
             font-weight: 600;
             text-align: left;
-            width: 120px; /* Sedikit lebih lebar untuk nama */
+            width: 120px;
             min-width: 120px;
             max-width: 120px;
             position: sticky;
@@ -178,6 +200,11 @@
         .partial {
             background: #fff3cd !important;
             color: #856404;
+        }
+
+        .libur {
+            background: #e2e3e5 !important;
+            color: #383d41;
         }
 
         .alert {
@@ -223,6 +250,62 @@
         .stat-card p {
             opacity: 0.9;
             font-size: 1.1rem;
+        }
+
+        .edit-section {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .edit-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .clickable-cell {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .clickable-cell:hover {
+            background-color: #e9ecef !important;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
         }
 
         @media (max-width: 768px) {
@@ -300,6 +383,13 @@
                 </div>
                 <button class="btn btn-primary" onclick="tambahPembayaran()">Tambah Pembayaran</button>
             </div>
+
+            <div class="edit-section">
+                <h3>📝 Edit Manual</h3>
+                <p>Klik pada sel pembayaran di tabel untuk mengedit nilai secara manual</p>
+                <button class="btn btn-warning" onclick="resetAllData()">Reset Semua Data</button>
+                <button class="btn btn-danger" onclick="resetPersonData()">Reset Data Seseorang</button>
+            </div>
             
             <div id="alertContainer"></div>
             
@@ -330,6 +420,26 @@
                 <tbody id="tableBody">
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Modal untuk edit -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Pembayaran</h3>
+            <p id="editInfo"></p>
+            <div style="margin: 15px 0;">
+                <label for="editAmount">Jumlah Pembayaran:</label>
+                <input type="number" id="editAmount" min="0" style="width: 100%; margin-top: 5px;">
+            </div>
+            <div style="margin: 15px 0;">
+                <label>
+                    <input type="checkbox" id="isLibur"> Penghuni sedang libur (10k)
+                </label>
+            </div>
+            <button class="btn btn-primary" onclick="saveEdit()">Simpan</button>
+            <button class="btn btn-danger" onclick="closeModal()">Batal</button>
         </div>
     </div>
 
@@ -370,19 +480,41 @@
             'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0]
         };
 
+        // Data status libur untuk setiap nama dan bulan
+        let liburData = {};
+
         // Nama-nama yang harus bayar 50k
         const specialNames = ['Dile', 'Muh Ering', 'Ibnu sabil', 'Akmal', 'Ansar'];
         
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
+        // Variabel untuk modal edit
+        let currentEditName = '';
+        let currentEditMonth = 0;
+
         function initializeApp() {
-            // Cek apakah ada data tersimpan di localStorage
+            // Inisialisasi data libur
+            Object.keys(paymentData).forEach(name => {
+                liburData[name] = new Array(12).fill(false);
+            });
+
+            // Cek apakah ada data tersimpan
             const savedData = localStorage.getItem('asramaPaymentData');
+            const savedLiburData = localStorage.getItem('asramaLiburData');
+            
             if (savedData) {
                 try {
                     paymentData = JSON.parse(savedData);
                 } catch (e) {
-                    console.log('Error loading saved data, using default data');
+                    console.log('Error loading saved payment data');
+                }
+            }
+
+            if (savedLiburData) {
+                try {
+                    liburData = JSON.parse(savedLiburData);
+                } catch (e) {
+                    console.log('Error loading saved libur data');
                 }
             }
             
@@ -392,8 +524,8 @@
         }
 
         function saveData() {
-            // Simpan data ke localStorage agar tidak hilang saat menutup browser
             localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
+            localStorage.setItem('asramaLiburData', JSON.stringify(liburData));
         }
 
         function populateNameSelect() {
@@ -408,13 +540,23 @@
             });
         }
 
-        function getTargetAmount(name) {
+        function getTargetAmount(name, monthIndex) {
+            // Cek apakah sedang libur
+            if (liburData[name] && liburData[name][monthIndex]) {
+                return 10; // Tarif libur
+            }
             return specialNames.includes(name) ? 50 : 35;
         }
 
         function getStatus(name, monthIndex) {
             const amount = paymentData[name][monthIndex];
-            const target = getTargetAmount(name);
+            const target = getTargetAmount(name, monthIndex);
+            
+            if (liburData[name] && liburData[name][monthIndex]) {
+                if (amount >= 10) return 'libur';
+                if (amount > 0) return 'partial';
+                return 'belum-lunas';
+            }
             
             if (amount >= target) return 'lunas';
             if (amount > 0) return 'partial';
@@ -438,8 +580,15 @@
                 for (let i = 0; i < 12; i++) {
                     // Kolom pembayaran
                     const paymentCell = document.createElement('td');
+                    paymentCell.className = 'clickable-cell';
                     const amount = paymentData[name][i];
                     paymentCell.textContent = amount > 0 ? `Rp. ${amount}` : '';
+                    
+                    // Event listener untuk edit
+                    paymentCell.addEventListener('click', () => {
+                        openEditModal(name, i);
+                    });
+                    
                     row.appendChild(paymentCell);
 
                     // Kolom keterangan
@@ -447,13 +596,11 @@
                     const status = getStatus(name, i);
                     statusCell.className = status;
                     
-                    if (amount > 0) {
-                        const target = getTargetAmount(name);
-                        if (amount >= target) {
-                            statusCell.style.backgroundColor = '#d4edda';
-                        } else {
-                            statusCell.style.backgroundColor = '#fff3cd';
-                        }
+                    if (status === 'libur') {
+                        statusCell.textContent = 'Libur';
+                    } else if (amount > 0) {
+                        const target = getTargetAmount(name, i);
+                        statusCell.textContent = amount >= target ? 'Lunas' : 'Kurang';
                     }
                     
                     row.appendChild(statusCell);
@@ -461,6 +608,43 @@
 
                 tbody.appendChild(row);
             });
+        }
+
+        function openEditModal(name, monthIndex) {
+            currentEditName = name;
+            currentEditMonth = monthIndex;
+            
+            const modal = document.getElementById('editModal');
+            const editInfo = document.getElementById('editInfo');
+            const editAmount = document.getElementById('editAmount');
+            const isLibur = document.getElementById('isLibur');
+            
+            editInfo.textContent = `Edit pembayaran ${name} untuk ${months[monthIndex]} 2025`;
+            editAmount.value = paymentData[name][monthIndex];
+            isLibur.checked = liburData[name] && liburData[name][monthIndex];
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveEdit() {
+            const amount = parseInt(document.getElementById('editAmount').value) || 0;
+            const isLibur = document.getElementById('isLibur').checked;
+            
+            // Update data
+            paymentData[currentEditName][currentEditMonth] = amount;
+            liburData[currentEditName][currentEditMonth] = isLibur;
+            
+            // Render ulang tabel
+            renderTable();
+            updateStats();
+            saveData();
+            
+            closeModal();
+            showAlert(`Data ${currentEditName} berhasil diupdate!`, 'success');
         }
 
         function tambahPembayaran() {
@@ -482,10 +666,10 @@
 
             // Proses pembayaran otomatis
             let sisaJumlah = jumlah;
-            const target = getTargetAmount(nama);
 
             for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
                 const currentAmount = paymentData[nama][i];
+                const target = getTargetAmount(nama, i);
                 const needed = target - currentAmount;
 
                 if (needed > 0) {
@@ -495,13 +679,13 @@
                 }
             }
 
-            // Jika masih ada sisa, tambahkan ke bulan selanjutnya
+            // Jika masih ada sisa, tambahkan ke bulan yang sudah lunas
             if (sisaJumlah > 0) {
                 for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
+                    const target = getTargetAmount(nama, i);
                     if (paymentData[nama][i] >= target) {
-                        const toAdd = Math.min(sisaJumlah, target);
-                        paymentData[nama][i] += toAdd;
-                        sisaJumlah -= toAdd;
+                        paymentData[nama][i] += sisaJumlah;
+                        sisaJumlah = 0;
                         break;
                     }
                 }
@@ -509,12 +693,45 @@
 
             renderTable();
             updateStats();
-            saveData(); // Simpan data setelah update
+            saveData();
             
             jumlahInput.value = '';
             namaSelect.value = '';
             
             showAlert(`Pembayaran Rp. ${jumlah.toLocaleString('id-ID')} untuk ${nama} berhasil ditambahkan!`, 'success');
+        }
+
+        function resetAllData() {
+            if (confirm('Apakah Anda yakin ingin reset semua data? Tindakan ini tidak dapat dibatalkan!')) {
+                Object.keys(paymentData).forEach(name => {
+                    paymentData[name] = new Array(12).fill(0);
+                    liburData[name] = new Array(12).fill(false);
+                });
+                
+                renderTable();
+                updateStats();
+                saveData();
+                showAlert('Semua data berhasil direset!', 'success');
+            }
+        }
+
+        function resetPersonData() {
+            const nama = document.getElementById('namaSelect').value;
+            
+            if (!nama) {
+                showAlert('Pilih nama terlebih dahulu!', 'danger');
+                return;
+            }
+
+            if (confirm(`Apakah Anda yakin ingin reset data ${nama}? Tindakan ini tidak dapat dibatalkan!`)) {
+                paymentData[nama] = new Array(12).fill(0);
+                liburData[nama] = new Array(12).fill(false);
+                
+                renderTable();
+                updateStats();
+                saveData();
+                showAlert(`Data ${nama} berhasil direset!`, 'success');
+            }
         }
 
         function showAlert(message, type) {
@@ -536,14 +753,9 @@
             let totalPendapatan = 0;
 
             Object.keys(paymentData).forEach(name => {
-                let namaTotalPendapatan = 0;
-
                 for (let i = 0; i < 12; i++) {
-                    const amount = paymentData[name][i];
-                    namaTotalPendapatan += amount;
+                    totalPendapatan += paymentData[name][i];
                 }
-
-                totalPendapatan += namaTotalPendapatan;
             });
 
             container.innerHTML = `
@@ -559,12 +771,10 @@
         }
 
         function downloadTable() {
-            // Capture tabel sebagai gambar/foto
             const table = document.getElementById('paymentTable');
             
-            // Opsi untuk html2canvas
             const options = {
-                scale: 2, // Kualitas tinggi
+                scale: 2,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#ffffff',
@@ -574,14 +784,11 @@
                 scrollY: 0
             };
             
-            // Capture tabel
             html2canvas(table, options).then(canvas => {
-                // Buat link download
                 const link = document.createElement('a');
                 link.download = `tabel_pembayaran_asrama_${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 
-                // Trigger download
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -593,15 +800,25 @@
             });
         }
 
-        // Inisialisasi aplikasi
+        // Event listeners
         document.addEventListener('DOMContentLoaded', initializeApp);
 
-        // Event listener untuk Enter key
         document.getElementById('jumlahBayar').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 tambahPembayaran();
             }
         });
+
+        // Event listener untuk modal
+        document.getElementsByClassName('close')[0].addEventListener('click', closeModal);
+
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
     </script>
 </body>
 </html>
