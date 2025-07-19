@@ -445,7 +445,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        // Data awal dari tabel yang diberikan - SUDAH TANPA 5 NAMA YANG DIHAPUS
+        // Data awal dari tabel yang diberikan
         let paymentData = {
             'Aan': [35, 35, 35, 35, 18, 0, 0, 0, 0, 0, 0, 0],
             'Adam': [35, 35, 35, 35, 9, 0, 0, 0, 0, 0, 0, 0],
@@ -462,7 +462,7 @@
             'Hamdani': [33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Ipping': [35, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Jamil': [35, 35, 35, 35, 12, 0, 0, 0, 0, 0, 0, 0],
-            'Johan': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Johar': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Mahfud': [35, 35, 35, 1, 0, 0, 0, 0, 0, 0, 0, 0],
             'Muhlis': [35, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Ridho': [35, 35, 35, 35, 11, 0, 0, 0, 0, 0, 0, 0],
@@ -472,13 +472,13 @@
             'Yusran': [35, 35, 35, 22, 0, 0, 0, 0, 0, 0, 0, 0],
             'Zauqi': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Dile': [50, 50, 50, 9, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0]
+            'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0],
         };
 
         // Data status libur untuk setiap nama dan bulan
         let liburData = {};
 
-        // Nama-nama yang harus bayar 50k (SUDAH DIHAPUS 'Ibnu sabil')
+        // Nama-nama yang harus bayar 50k
         const specialNames = ['Dile', 'Muh Ering', 'Akmal', 'Ansar'];
         
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -493,7 +493,25 @@
                 liburData[name] = new Array(12).fill(false);
             });
 
-            // TIDAK MEMUAT DATA DARI localStorage AGAR SELALU FRESH START
+            // Cek apakah ada data tersimpan
+            const savedData = localStorage.getItem('asramaPaymentData');
+            const savedLiburData = localStorage.getItem('asramaLiburData');
+            
+            if (savedData) {
+                try {
+                    paymentData = JSON.parse(savedData);
+                } catch (e) {
+                    console.log('Error loading saved payment data');
+                }
+            }
+
+            if (savedLiburData) {
+                try {
+                    liburData = JSON.parse(savedLiburData);
+                } catch (e) {
+                    console.log('Error loading saved libur data');
+                }
+            }
             
             populateNameSelect();
             renderTable();
@@ -501,9 +519,8 @@
         }
 
         function saveData() {
-            // Matikan localStorage untuk mencegah masalah di masa depan
-            // localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
-            // localStorage.setItem('asramaLiburData', JSON.stringify(liburData));
+            localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
+            localStorage.setItem('asramaLiburData', JSON.stringify(liburData));
         }
 
         function populateNameSelect() {
