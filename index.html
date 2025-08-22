@@ -157,13 +157,10 @@
         }
 
         th, td {
-            padding: 12px;
+            padding: 8px;
             text-align: center;
             border: 1px solid #dee2e6;
-            font-size: 14px;
-            width: 80px;
-            min-width: 80px;
-            max-width: 80px;
+            font-size: 12px;
         }
 
         th {
@@ -179,12 +176,21 @@
             background: #f8f9fa;
             font-weight: 600;
             text-align: left;
-            width: 120px;
-            min-width: 120px;
-            max-width: 120px;
+            width: 100px;
+            min-width: 100px;
             position: sticky;
             left: 0;
             z-index: 5;
+        }
+
+        .month-col {
+            width: 70px;
+            min-width: 70px;
+        }
+
+        .status-col {
+            width: 40px;
+            min-width: 40px;
         }
 
         .lunas {
@@ -205,6 +211,19 @@
         .libur {
             background: #e2e3e5 !important;
             color: #383d41;
+        }
+
+        .separator-row {
+            background: #f8c555 !important;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .separator-row td {
+            background: #f8c555 !important;
+            color: #333;
+            font-weight: bold;
+            padding: 10px;
         }
 
         .alert {
@@ -322,17 +341,23 @@
             }
             
             th, td {
-                padding: 8px;
-                font-size: 12px;
-                width: 70px;
-                min-width: 70px;
-                max-width: 70px;
+                padding: 6px;
+                font-size: 11px;
             }
             
             .nama-col {
-                width: 100px;
-                min-width: 100px;
-                max-width: 100px;
+                width: 80px;
+                min-width: 80px;
+            }
+            
+            .month-col {
+                width: 60px;
+                min-width: 60px;
+            }
+            
+            .status-col {
+                width: 35px;
+                min-width: 35px;
             }
             
             .container {
@@ -342,22 +367,6 @@
             
             body {
                 padding: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            th, td {
-                padding: 6px;
-                font-size: 11px;
-                width: 60px;
-                min-width: 60px;
-                max-width: 60px;
-            }
-            
-            .nama-col {
-                width: 80px;
-                min-width: 80px;
-                max-width: 80px;
             }
         }
     </style>
@@ -403,18 +412,18 @@
                 <thead>
                     <tr>
                         <th class="nama-col">Nama</th>
-                        <th>Januari 2025</th><th>Ket</th>
-                        <th>Februari 2025</th><th>Ket</th>
-                        <th>Maret 2025</th><th>Ket</th>
-                        <th>April 2025</th><th>Ket</th>
-                        <th>Mei 2025</th><th>Ket</th>
-                        <th>Juni 2025</th><th>Ket</th>
-                        <th>Juli 2025</th><th>Ket</th>
-                        <th>Agustus 2025</th><th>Ket</th>
-                        <th>September 2025</th><th>Ket</th>
-                        <th>Oktober 2025</th><th>Ket</th>
-                        <th>November 2025</th><th>Ket</th>
-                        <th>Desember 2025</th><th>Ket</th>
+                        <th class="month-col">Januari 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Februari 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Maret 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">April 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Mei 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Juni 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Juli 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Agustus 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">September 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Oktober 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">November 2025</th><th class="status-col">Ket</th>
+                        <th class="month-col">Desember 2025</th><th class="status-col">Ket</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -459,22 +468,15 @@
             'Fathurrahman': [23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Fiqram': [35, 35, 35, 35, 35, 35, 23, 0, 0, 0, 0, 0],
             'Hamdani': [33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Ibnu sabil': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Ipping': [35, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Iqbal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Jamil': [35, 35, 35, 35, 35, 0, 0, 0, 0, 0, 0, 0],
             'Johar': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Khalik': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Mahfud': [35, 35, 35, 23, 0, 0, 0, 0, 0, 0, 0, 0],
             'Muhlis': [35, 35, 35, 35, 29, 0, 0, 0, 0, 0, 0, 0],
             'Ridho': [35, 35, 35, 35, 11, 0, 0, 0, 0, 0, 0, 0],
             'Rival': [10, 35, 35, 35, 34, 0, 0, 0, 0, 0, 0, 0],
             'Rivaldi': [9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Suhail': [35, 35, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Wahid': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Yusran': [35, 35, 35, 22, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Zauqi': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Zul': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             // Penghuni Tamu
             'Akmal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Ansar': [50, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -485,9 +487,9 @@
         // Data kategori penghuni
         const penghuniTetap = [
             'Aan', 'Adam', 'Arul', 'Arzad', 'Asraf', 'Dwiky', 'Erfan', 'Fajrin', 
-            'Fathurrahman', 'Fiqram', 'Hamdani', 'Ibnu sabil', 'Ipping', 'Iqbal', 
-            'Jamil', 'Johar', 'Khalik', 'Mahfud', 'Muhlis', 'Ridho', 'Rival', 
-            'Rivaldi', 'Suhail', 'Wahid', 'Yusran', 'Zauqi', 'Zul'
+            'Fathurrahman', 'Fiqram', 'Hamdani', 'Ipping',
+            'Jamil', 'Johar', 'Muhlis', 'Ridho', 'Rival', 
+            'Rivaldi', 'Suhail', 'Yusran', 'Zauqi'
         ];
 
         const penghuniTamu = ['Akmal', 'Ansar', 'Dile', 'Muh Ering'];
@@ -510,34 +512,9 @@
                 liburData[name] = new Array(12).fill(false);
             });
 
-            // Cek apakah ada data tersimpan
-            const savedData = localStorage.getItem('asramaPaymentData');
-            const savedLiburData = localStorage.getItem('asramaLiburData');
-            
-            if (savedData) {
-                try {
-                    paymentData = JSON.parse(savedData);
-                } catch (e) {
-                    console.log('Error loading saved payment data');
-                }
-            }
-
-            if (savedLiburData) {
-                try {
-                    liburData = JSON.parse(savedLiburData);
-                } catch (e) {
-                    console.log('Error loading saved libur data');
-                }
-            }
-            
             populateNameSelect();
             renderTable();
             updateStats();
-        }
-
-        function saveData() {
-            localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
-            localStorage.setItem('asramaLiburData', JSON.stringify(liburData));
         }
 
         function populateNameSelect() {
@@ -579,47 +556,80 @@
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            Object.keys(paymentData).sort().forEach(name => {
-                const row = document.createElement('tr');
-                
-                // Kolom nama
-                const nameCell = document.createElement('td');
-                nameCell.className = 'nama-col';
-                nameCell.textContent = name;
-                row.appendChild(nameCell);
+            // Render Penghuni Tetap
+            const separatorRow1 = document.createElement('tr');
+            separatorRow1.className = 'separator-row';
+            const separatorCell1 = document.createElement('td');
+            separatorCell1.colSpan = 25; // 1 kolom nama + 24 kolom (12 bulan * 2)
+            separatorCell1.textContent = 'Penghuni Tetap';
+            separatorRow1.appendChild(separatorCell1);
+            tbody.appendChild(separatorRow1);
 
-                // Kolom bulan dan keterangan
-                for (let i = 0; i < 12; i++) {
-                    // Kolom pembayaran
-                    const paymentCell = document.createElement('td');
-                    paymentCell.className = 'clickable-cell';
-                    const amount = paymentData[name][i];
-                    paymentCell.textContent = amount > 0 ? `Rp. ${amount}` : '';
-                    
-                    // Event listener untuk edit
-                    paymentCell.addEventListener('click', () => {
-                        openEditModal(name, i);
-                    });
-                    
-                    row.appendChild(paymentCell);
-
-                    // Kolom keterangan
-                    const statusCell = document.createElement('td');
-                    const status = getStatus(name, i);
-                    statusCell.className = status;
-                    
-                    if (status === 'libur') {
-                        statusCell.textContent = 'Libur';
-                    } else if (amount > 0) {
-                        const target = getTargetAmount(name, i);
-                        statusCell.textContent = amount >= target ? 'Lunas' : 'Kurang';
-                    }
-                    
-                    row.appendChild(statusCell);
+            penghuniTetap.forEach(name => {
+                if (paymentData[name]) {
+                    const row = createPersonRow(name);
+                    tbody.appendChild(row);
                 }
-
-                tbody.appendChild(row);
             });
+
+            // Render Penghuni Tamu
+            const separatorRow2 = document.createElement('tr');
+            separatorRow2.className = 'separator-row';
+            const separatorCell2 = document.createElement('td');
+            separatorCell2.colSpan = 25;
+            separatorCell2.textContent = 'Penghuni Tamu';
+            separatorRow2.appendChild(separatorCell2);
+            tbody.appendChild(separatorRow2);
+
+            penghuniTamu.forEach(name => {
+                if (paymentData[name]) {
+                    const row = createPersonRow(name);
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function createPersonRow(name) {
+            const row = document.createElement('tr');
+            
+            // Kolom nama
+            const nameCell = document.createElement('td');
+            nameCell.className = 'nama-col';
+            nameCell.textContent = name;
+            row.appendChild(nameCell);
+
+            // Kolom bulan dan keterangan
+            for (let i = 0; i < 12; i++) {
+                // Kolom pembayaran
+                const paymentCell = document.createElement('td');
+                paymentCell.className = 'clickable-cell month-col';
+                const amount = paymentData[name][i];
+                paymentCell.textContent = amount > 0 ? `Rp. ${amount}` : '';
+                
+                // Event listener untuk edit
+                paymentCell.addEventListener('click', () => {
+                    openEditModal(name, i);
+                });
+                
+                row.appendChild(paymentCell);
+
+                // Kolom keterangan
+                const statusCell = document.createElement('td');
+                statusCell.className = 'status-col';
+                const status = getStatus(name, i);
+                statusCell.classList.add(status);
+                
+                if (status === 'libur') {
+                    statusCell.textContent = 'Libur';
+                } else if (amount > 0) {
+                    const target = getTargetAmount(name, i);
+                    statusCell.textContent = amount >= target ? 'Lunas' : 'Kurang';
+                }
+                
+                row.appendChild(statusCell);
+            }
+
+            return row;
         }
 
         function openEditModal(name, monthIndex) {
@@ -653,7 +663,6 @@
             // Render ulang tabel
             renderTable();
             updateStats();
-            saveData();
             
             closeModal();
             showAlert(`Data ${currentEditName} berhasil diupdate!`, 'success');
@@ -705,7 +714,6 @@
 
             renderTable();
             updateStats();
-            saveData();
             
             jumlahInput.value = '';
             namaSelect.value = '';
@@ -722,7 +730,6 @@
                 
                 renderTable();
                 updateStats();
-                saveData();
                 showAlert('Semua data berhasil direset!', 'success');
             }
         }
@@ -741,7 +748,6 @@
                 
                 renderTable();
                 updateStats();
-                saveData();
                 showAlert(`Data ${nama} berhasil direset!`, 'success');
             }
         }
