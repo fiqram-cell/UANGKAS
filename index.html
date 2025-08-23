@@ -468,15 +468,22 @@
             'Fathurrahman': [23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Fiqram': [35, 35, 35, 35, 35, 35, 23, 0, 0, 0, 0, 0],
             'Hamdani': [33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Ibnu sabil': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Ipping': [35, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Iqbal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Jamil': [35, 35, 35, 35, 35, 0, 0, 0, 0, 0, 0, 0],
             'Johar': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Khalik': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Mahfud': [35, 35, 35, 23, 0, 0, 0, 0, 0, 0, 0, 0],
             'Muhlis': [35, 35, 35, 35, 29, 0, 0, 0, 0, 0, 0, 0],
             'Ridho': [35, 35, 35, 35, 11, 0, 0, 0, 0, 0, 0, 0],
             'Rival': [10, 35, 35, 35, 34, 0, 0, 0, 0, 0, 0, 0],
             'Rivaldi': [9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Suhail': [35, 35, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Wahid': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Yusran': [35, 35, 35, 22, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Zauqi': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            'Zul': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             // Penghuni Tamu
             'Akmal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             'Ansar': [50, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -487,9 +494,9 @@
         // Data kategori penghuni
         const penghuniTetap = [
             'Aan', 'Adam', 'Arul', 'Arzad', 'Asraf', 'Dwiky', 'Erfan', 'Fajrin', 
-            'Fathurrahman', 'Fiqram', 'Hamdani', 'Ipping',
-            'Jamil', 'Johar', 'Muhlis', 'Ridho', 'Rival', 
-            'Rivaldi', 'Suhail', 'Yusran', 'Zauqi'
+            'Fathurrahman', 'Fiqram', 'Hamdani', 'Ibnu sabil', 'Ipping', 'Iqbal', 
+            'Jamil', 'Johar', 'Khalik', 'Mahfud', 'Muhlis', 'Ridho', 'Rival', 
+            'Rivaldi', 'Suhail', 'Wahid', 'Yusran', 'Zauqi', 'Zul'
         ];
 
         const penghuniTamu = ['Akmal', 'Ansar', 'Dile', 'Muh Ering'];
@@ -512,9 +519,34 @@
                 liburData[name] = new Array(12).fill(false);
             });
 
+            // Cek apakah ada data tersimpan
+            const savedData = localStorage.getItem('asramaPaymentData');
+            const savedLiburData = localStorage.getItem('asramaLiburData');
+            
+            if (savedData) {
+                try {
+                    paymentData = JSON.parse(savedData);
+                } catch (e) {
+                    console.log('Error loading saved payment data');
+                }
+            }
+
+            if (savedLiburData) {
+                try {
+                    liburData = JSON.parse(savedLiburData);
+                } catch (e) {
+                    console.log('Error loading saved libur data');
+                }
+            }
+
             populateNameSelect();
             renderTable();
             updateStats();
+        }
+
+        function saveData() {
+            localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
+            localStorage.setItem('asramaLiburData', JSON.stringify(liburData));
         }
 
         function populateNameSelect() {
@@ -663,6 +695,7 @@
             // Render ulang tabel
             renderTable();
             updateStats();
+            saveData();
             
             closeModal();
             showAlert(`Data ${currentEditName} berhasil diupdate!`, 'success');
@@ -714,6 +747,7 @@
 
             renderTable();
             updateStats();
+            saveData();
             
             jumlahInput.value = '';
             namaSelect.value = '';
@@ -730,6 +764,7 @@
                 
                 renderTable();
                 updateStats();
+                saveData();
                 showAlert('Semua data berhasil direset!', 'success');
             }
         }
@@ -748,6 +783,7 @@
                 
                 renderTable();
                 updateStats();
+                saveData();
                 showAlert(`Data ${nama} berhasil direset!`, 'success');
             }
         }
