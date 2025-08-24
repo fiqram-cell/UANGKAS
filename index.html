@@ -141,6 +141,16 @@
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
         }
 
+        .btn-info {
+            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(54, 209, 220, 0.4);
+        }
+
         .table-container {
             padding: 30px;
             overflow-x: auto;
@@ -271,6 +281,19 @@
             font-size: 1.1rem;
         }
 
+        .management-section {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #b8daff;
+        }
+
+        .management-section h3 {
+            color: #004085;
+            margin-bottom: 15px;
+        }
+
         .edit-section {
             background: #fff3cd;
             padding: 20px;
@@ -281,6 +304,19 @@
 
         .edit-section h3 {
             color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .year-section {
+            background: #d1ecf1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+        }
+
+        .year-section h3 {
+            color: #0c5460;
             margin-bottom: 15px;
         }
 
@@ -379,6 +415,44 @@
         </div>
 
         <div class="controls">
+            <!-- Bagian Pilih Tahun -->
+            <div class="year-section">
+                <h3>📅 Manajemen Tahun</h3>
+                <div class="form-group">
+                    <div class="form-control">
+                        <label for="yearSelect">Pilih Tahun:</label>
+                        <select id="yearSelect" onchange="changeYear()">
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label for="newYear">Tambah Tahun Baru:</label>
+                        <input type="number" id="newYear" placeholder="Contoh: 2026" min="2020" max="2050">
+                    </div>
+                    <button class="btn btn-info" onclick="addNewYear()">Tambah Tahun</button>
+                </div>
+            </div>
+
+            <!-- Bagian Manajemen Penghuni -->
+            <div class="management-section">
+                <h3>👥 Manajemen Penghuni</h3>
+                <div class="form-group">
+                    <div class="form-control">
+                        <label for="newPenghuniName">Nama Penghuni Baru:</label>
+                        <input type="text" id="newPenghuniName" placeholder="Masukkan nama penghuni">
+                    </div>
+                    <div class="form-control">
+                        <label for="penghuniType">Jenis Penghuni:</label>
+                        <select id="penghuniType">
+                            <option value="tetap">Penghuni Tetap (Rp 35k)</option>
+                            <option value="tamu">Penghuni Tamu (Rp 50k)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-info" onclick="tambahPenghuni()">Tambah Penghuni</button>
+                </div>
+            </div>
+
+            <!-- Bagian Pembayaran -->
             <div class="form-group">
                 <div class="form-control">
                     <label for="namaSelect">Pilih Nama:</label>
@@ -409,22 +483,7 @@
 
         <div class="table-container">
             <table id="paymentTable">
-                <thead>
-                    <tr>
-                        <th class="nama-col">Nama</th>
-                        <th class="month-col">Januari 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Februari 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Maret 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">April 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Mei 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Juni 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Juli 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Agustus 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">September 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Oktober 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">November 2025</th><th class="status-col">Ket</th>
-                        <th class="month-col">Desember 2025</th><th class="status-col">Ket</th>
-                    </tr>
+                <thead id="tableHeader">
                 </thead>
                 <tbody id="tableBody">
                 </tbody>
@@ -454,51 +513,53 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        // Data awal dari tabel yang diberikan
-        let paymentData = {
-            // Penghuni Tetap
-            'Aan': [35, 35, 35, 35, 35, 35, 1, 0, 0, 0, 0, 0],
-            'Adam': [35, 35, 35, 35, 9, 0, 0, 0, 0, 0, 0, 0],
-            'Arul': [35, 35, 35, 35, 35, 35, 10, 0, 0, 0, 0, 0],
-            'Arzad': [35, 35, 35, 10, 35, 35, 0, 0, 0, 0, 0, 0],
-            'Asraf': [10, 35, 35, 35, 35, 12, 0, 0, 0, 0, 0, 0],
-            'Erfan': [35, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Fajrin': [35, 35, 35, 35, 32, 0, 0, 0, 0, 0, 0, 0],
-            'Fathurrahman': [23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Fiqram': [35, 35, 35, 35, 35, 35, 23, 0, 0, 0, 0, 0],
-            'Hamdani': [33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Ipping': [35, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Jamil': [35, 35, 35, 35, 35, 0, 0, 0, 0, 0, 0, 0],
-            'Johar': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Muhlis': [35, 35, 35, 35, 29, 0, 0, 0, 0, 0, 0, 0],
-            'Ridho': [35, 35, 35, 35, 11, 0, 0, 0, 0, 0, 0, 0],
-            'Rival': [10, 35, 35, 35, 34, 0, 0, 0, 0, 0, 0, 0],
-            'Rivaldi': [9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Suhail': [35, 35, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Yusran': [35, 35, 35, 22, 0, 0, 0, 0, 0, 0, 0, 0],
-            // Penghuni Tamu
-            'Akmal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Ansar': [50, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Dile': [50, 50, 50, 9, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Dwiky': [35, 35, 35, 5, 0, 0, 0, 0, 0, 0, 0, 0],
-            'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0]
+        // Data global
+        let currentYear = 2025;
+        let allYearData = {};
+        let availableYears = [2025];
+
+        // Inisialisasi data default untuk 2025
+        const defaultData2025 = {
+            paymentData: {
+                // Penghuni Tetap
+                'Aan': [35, 35, 35, 35, 35, 35, 1, 0, 0, 0, 0, 0],
+                'Adam': [35, 35, 35, 35, 9, 0, 0, 0, 0, 0, 0, 0],
+                'Arul': [35, 35, 35, 35, 35, 35, 10, 0, 0, 0, 0, 0],
+                'Arzad': [35, 35, 35, 10, 35, 35, 0, 0, 0, 0, 0, 0],
+                'Asraf': [10, 35, 35, 35, 35, 12, 0, 0, 0, 0, 0, 0],
+                'Erfan': [35, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Fajrin': [35, 35, 35, 35, 32, 0, 0, 0, 0, 0, 0, 0],
+                'Fathurrahman': [23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Fiqram': [35, 35, 35, 35, 35, 35, 23, 0, 0, 0, 0, 0],
+                'Hamdani': [33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Ipping': [35, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Jamil': [35, 35, 35, 35, 35, 0, 0, 0, 0, 0, 0, 0],
+                'Johar': [35, 35, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Muhlis': [35, 35, 35, 35, 29, 0, 0, 0, 0, 0, 0, 0],
+                'Ridho': [35, 35, 35, 35, 11, 0, 0, 0, 0, 0, 0, 0],
+                'Rival': [10, 35, 35, 35, 34, 0, 0, 0, 0, 0, 0, 0],
+                'Rivaldi': [9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Suhail': [35, 35, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Yusran': [35, 35, 35, 22, 0, 0, 0, 0, 0, 0, 0, 0],
+                // Penghuni Tamu
+                'Akmal': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Ansar': [50, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Dile': [50, 50, 50, 9, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Dwiky': [35, 35, 35, 5, 0, 0, 0, 0, 0, 0, 0, 0],
+                'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            liburData: {},
+            penghuniTetap: [
+                'Aan', 'Adam', 'Arul', 'Arzad', 'Asraf', 'Erfan', 'Fajrin', 
+                'Fathurrahman', 'Fiqram', 'Hamdani', 'Ipping',
+                'Jamil', 'Johar', 'Muhlis', 'Ridho', 'Rival', 
+                'Rivaldi', 'Suhail', 'Yusran'
+            ],
+            penghuniTamu: ['Akmal', 'Ansar', 'Dile', 'Dwiky', 'Muh Ering']
         };
 
-        // Data kategori penghuni
-        const penghuniTetap = [
-            'Aan', 'Adam', 'Arul', 'Arzad', 'Asraf', 'Erfan', 'Fajrin', 
-            'Fathurrahman', 'Fiqram', 'Hamdani', 'Ipping',
-            'Jamil', 'Johar', 'Muhlis', 'Ridho', 'Rival', 
-            'Rivaldi', 'Suhail', 'Yusran'
-        ];
-
-        const penghuniTamu = ['Akmal', 'Ansar', 'Dile', 'Dwiky', 'Muh Ering'];
-
-        // Data status libur untuk setiap nama dan bulan
-        let liburData = {};
-
         // Nama-nama yang harus bayar 50k
-        const specialNames = ['Dile', 'Muh Ering', 'Ibnu sabil', 'Akmal', 'Ansar', 'Dwiky'];
+        const specialNames = ['Dile', 'Muh Ering', 'Ibnu sabil', 'Akmal', 'Ansar'];
         
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
@@ -507,66 +568,167 @@
         let currentEditMonth = 0;
 
         function initializeApp() {
-            // Inisialisasi data libur
-            Object.keys(paymentData).forEach(name => {
-                liburData[name] = new Array(12).fill(false);
-            });
-
-            // Cek apakah ada data tersimpan
-            const savedData = localStorage.getItem('asramaPaymentData');
-            const savedLiburData = localStorage.getItem('asramaLiburData');
+            // Load data dari localStorage atau gunakan default
+            const savedData = JSON.parse(localStorage.getItem('asramaAllYearData') || '{}');
+            const savedYears = JSON.parse(localStorage.getItem('asramaAvailableYears') || '[2025]');
             
-            if (savedData) {
-                try {
-                    paymentData = JSON.parse(savedData);
-                } catch (e) {
-                    console.log('Error loading saved payment data');
-                }
+            if (Object.keys(savedData).length > 0) {
+                allYearData = savedData;
+                availableYears = savedYears;
+            } else {
+                // Inisialisasi data default untuk 2025
+                allYearData[2025] = JSON.parse(JSON.stringify(defaultData2025));
+                // Inisialisasi libur data
+                Object.keys(allYearData[2025].paymentData).forEach(name => {
+                    allYearData[2025].liburData[name] = new Array(12).fill(false);
+                });
             }
 
-            if (savedLiburData) {
-                try {
-                    liburData = JSON.parse(savedLiburData);
-                } catch (e) {
-                    console.log('Error loading saved libur data');
-                }
-            }
+            populateYearSelect();
+            changeYear();
+        }
 
+        function saveData() {
+            localStorage.setItem('asramaAllYearData', JSON.stringify(allYearData));
+            localStorage.setItem('asramaAvailableYears', JSON.stringify(availableYears));
+        }
+
+        function populateYearSelect() {
+            const select = document.getElementById('yearSelect');
+            select.innerHTML = '';
+            
+            availableYears.sort((a, b) => b - a).forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        function changeYear() {
+            currentYear = parseInt(document.getElementById('yearSelect').value);
             populateNameSelect();
             renderTable();
             updateStats();
         }
 
-        function saveData() {
-            localStorage.setItem('asramaPaymentData', JSON.stringify(paymentData));
-            localStorage.setItem('asramaLiburData', JSON.stringify(liburData));
+        function addNewYear() {
+            const newYearInput = document.getElementById('newYear');
+            const year = parseInt(newYearInput.value);
+            
+            if (!year || year < 2020 || year > 2050) {
+                showAlert('Masukkan tahun yang valid (2020-2050)!', 'danger');
+                return;
+            }
+            
+            if (availableYears.includes(year)) {
+                showAlert(`Tahun ${year} sudah ada!`, 'danger');
+                return;
+            }
+            
+            // Tambah tahun baru dengan data kosong
+            allYearData[year] = {
+                paymentData: {},
+                liburData: {},
+                penghuniTetap: [],
+                penghuniTamu: []
+            };
+            
+            availableYears.push(year);
+            currentYear = year;
+            
+            populateYearSelect();
+            populateNameSelect();
+            renderTable();
+            updateStats();
+            saveData();
+            
+            newYearInput.value = '';
+            showAlert(`Tahun ${year} berhasil ditambahkan!`, 'success');
         }
 
         function populateNameSelect() {
             const select = document.getElementById('namaSelect');
-            const sortedNames = Object.keys(paymentData).sort();
+            select.innerHTML = '<option value="">-- Pilih Nama --</option>';
             
-            sortedNames.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                select.appendChild(option);
-            });
+            if (allYearData[currentYear] && allYearData[currentYear].paymentData) {
+                const sortedNames = Object.keys(allYearData[currentYear].paymentData).sort();
+                
+                sortedNames.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function tambahPenghuni() {
+            const nameInput = document.getElementById('newPenghuniName');
+            const typeSelect = document.getElementById('penghuniType');
+            
+            const name = nameInput.value.trim();
+            const type = typeSelect.value;
+            
+            if (!name) {
+                showAlert('Masukkan nama penghuni!', 'danger');
+                return;
+            }
+            
+            // Pastikan data tahun exists
+            if (!allYearData[currentYear]) {
+                allYearData[currentYear] = {
+                    paymentData: {},
+                    liburData: {},
+                    penghuniTetap: [],
+                    penghuniTamu: []
+                };
+            }
+            
+            if (allYearData[currentYear].paymentData[name]) {
+                showAlert(`Penghuni ${name} sudah ada!`, 'danger');
+                return;
+            }
+            
+            // Tambah penghuni baru
+            allYearData[currentYear].paymentData[name] = new Array(12).fill(0);
+            allYearData[currentYear].liburData[name] = new Array(12).fill(false);
+            
+            if (type === 'tetap') {
+                allYearData[currentYear].penghuniTetap.push(name);
+            } else {
+                allYearData[currentYear].penghuniTamu.push(name);
+            }
+            
+            populateNameSelect();
+            renderTable();
+            updateStats();
+            saveData();
+            
+            nameInput.value = '';
+            showAlert(`Penghuni ${name} berhasil ditambahkan!`, 'success');
         }
 
         function getTargetAmount(name, monthIndex) {
             // Cek apakah sedang libur
-            if (liburData[name] && liburData[name][monthIndex]) {
+            if (allYearData[currentYear].liburData[name] && allYearData[currentYear].liburData[name][monthIndex]) {
                 return 10; // Tarif libur
             }
-            return specialNames.includes(name) ? 50 : 35;
+            
+            // Cek apakah termasuk penghuni tamu atau nama special
+            if (allYearData[currentYear].penghuniTamu.includes(name) || specialNames.includes(name)) {
+                return 50;
+            }
+            
+            return 35;
         }
 
         function getStatus(name, monthIndex) {
-            const amount = paymentData[name][monthIndex];
+            const amount = allYearData[currentYear].paymentData[name][monthIndex];
             const target = getTargetAmount(name, monthIndex);
             
-            if (liburData[name] && liburData[name][monthIndex]) {
+            if (allYearData[currentYear].liburData[name] && allYearData[currentYear].liburData[name][monthIndex]) {
                 if (amount >= 10) return 'libur';
                 if (amount > 0) return 'partial';
                 return 'belum-lunas';
@@ -577,47 +739,82 @@
             return 'belum-lunas';
         }
 
+        function renderTableHeader() {
+            const thead = document.getElementById('tableHeader');
+            thead.innerHTML = '';
+            
+            const headerRow = document.createElement('tr');
+            
+            // Kolom nama
+            const nameHeader = document.createElement('th');
+            nameHeader.className = 'nama-col';
+            nameHeader.textContent = 'Nama';
+            headerRow.appendChild(nameHeader);
+            
+            // Kolom bulan
+            for (let i = 0; i < 12; i++) {
+                const monthHeader = document.createElement('th');
+                monthHeader.className = 'month-col';
+                monthHeader.textContent = `${months[i]} ${currentYear}`;
+                headerRow.appendChild(monthHeader);
+                
+                const statusHeader = document.createElement('th');
+                statusHeader.className = 'status-col';
+                statusHeader.textContent = 'Ket';
+                headerRow.appendChild(statusHeader);
+            }
+            
+            thead.appendChild(headerRow);
+        }
+
         function renderTable() {
+            if (!allYearData[currentYear]) return;
+            
+            renderTableHeader();
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
             // Render Penghuni Tetap
-            const separatorRow1 = document.createElement('tr');
-            separatorRow1.className = 'separator-row';
-            const separatorCell1 = document.createElement('td');
-            separatorCell1.colSpan = 25; // 1 kolom nama + 24 kolom (12 bulan * 2)
-            separatorCell1.textContent = 'Penghuni Tetap';
-            separatorRow1.appendChild(separatorCell1);
-            tbody.appendChild(separatorRow1);
+            if (allYearData[currentYear].penghuniTetap.length > 0) {
+                const separatorRow1 = document.createElement('tr');
+                separatorRow1.className = 'separator-row';
+                const separatorCell1 = document.createElement('td');
+                separatorCell1.colSpan = 25; // 1 kolom nama + 24 kolom (12 bulan * 2)
+                separatorCell1.textContent = 'Penghuni Tetap';
+                separatorRow1.appendChild(separatorCell1);
+                tbody.appendChild(separatorRow1);
 
-            penghuniTetap.forEach(name => {
-                if (paymentData[name]) {
-                    const row = createPersonRow(name);
-                    tbody.appendChild(row);
-                }
-            });
+                allYearData[currentYear].penghuniTetap.forEach(name => {
+                    if (allYearData[currentYear].paymentData[name]) {
+                        const row = createPersonRow(name);
+                        tbody.appendChild(row);
+                    }
+                });
+            }
 
             // Render Penghuni Tamu
-            const separatorRow2 = document.createElement('tr');
-            separatorRow2.className = 'separator-row';
-            const separatorCell2 = document.createElement('td');
-            separatorCell2.colSpan = 25;
-            separatorCell2.textContent = 'Penghuni Tamu';
-            separatorRow2.appendChild(separatorCell2);
-            tbody.appendChild(separatorRow2);
+            if (allYearData[currentYear].penghuniTamu.length > 0) {
+                const separatorRow2 = document.createElement('tr');
+                separatorRow2.className = 'separator-row';
+                const separatorCell2 = document.createElement('td');
+                separatorCell2.colSpan = 25;
+                separatorCell2.textContent = 'Penghuni Tamu';
+                separatorRow2.appendChild(separatorCell2);
+                tbody.appendChild(separatorRow2);
 
-            penghuniTamu.forEach(name => {
-                if (paymentData[name]) {
-                    const row = createPersonRow(name);
-                    tbody.appendChild(row);
-                }
-            });
+                allYearData[currentYear].penghuniTamu.forEach(name => {
+                    if (allYearData[currentYear].paymentData[name]) {
+                        const row = createPersonRow(name);
+                        tbody.appendChild(row);
+                    }
+                });
+            }
         }
 
         function createPersonRow(name) {
             const row = document.createElement('tr');
             
-            // Kolom nama
+            // Kolom nama (tanpa tombol hapus)
             const nameCell = document.createElement('td');
             nameCell.className = 'nama-col';
             nameCell.textContent = name;
@@ -628,7 +825,7 @@
                 // Kolom pembayaran
                 const paymentCell = document.createElement('td');
                 paymentCell.className = 'clickable-cell month-col';
-                const amount = paymentData[name][i];
+                const amount = allYearData[currentYear].paymentData[name][i];
                 paymentCell.textContent = amount > 0 ? `Rp. ${amount}` : '';
                 
                 // Event listener untuk edit
@@ -666,9 +863,9 @@
             const editAmount = document.getElementById('editAmount');
             const isLibur = document.getElementById('isLibur');
             
-            editInfo.textContent = `Edit pembayaran ${name} untuk ${months[monthIndex]} 2025`;
-            editAmount.value = paymentData[name][monthIndex];
-            isLibur.checked = liburData[name] && liburData[name][monthIndex];
+            editInfo.textContent = `Edit pembayaran ${name} untuk ${months[monthIndex]} ${currentYear}`;
+            editAmount.value = allYearData[currentYear].paymentData[name][monthIndex];
+            isLibur.checked = allYearData[currentYear].liburData[name] && allYearData[currentYear].liburData[name][monthIndex];
             
             modal.style.display = 'block';
         }
@@ -682,8 +879,8 @@
             const isLibur = document.getElementById('isLibur').checked;
             
             // Update data
-            paymentData[currentEditName][currentEditMonth] = amount;
-            liburData[currentEditName][currentEditMonth] = isLibur;
+            allYearData[currentYear].paymentData[currentEditName][currentEditMonth] = amount;
+            allYearData[currentYear].liburData[currentEditName][currentEditMonth] = isLibur;
             
             // Render ulang tabel
             renderTable();
@@ -711,17 +908,22 @@
                 return;
             }
 
+            if (!allYearData[currentYear].paymentData[nama]) {
+                showAlert('Data penghuni tidak ditemukan!', 'danger');
+                return;
+            }
+
             // Proses pembayaran otomatis
             let sisaJumlah = jumlah;
 
             for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
-                const currentAmount = paymentData[nama][i];
+                const currentAmount = allYearData[currentYear].paymentData[nama][i];
                 const target = getTargetAmount(nama, i);
                 const needed = target - currentAmount;
 
                 if (needed > 0) {
                     const toAdd = Math.min(sisaJumlah, needed);
-                    paymentData[nama][i] += toAdd;
+                    allYearData[currentYear].paymentData[nama][i] += toAdd;
                     sisaJumlah -= toAdd;
                 }
             }
@@ -730,8 +932,8 @@
             if (sisaJumlah > 0) {
                 for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
                     const target = getTargetAmount(nama, i);
-                    if (paymentData[nama][i] >= target) {
-                        paymentData[nama][i] += sisaJumlah;
+                    if (allYearData[currentYear].paymentData[nama][i] >= target) {
+                        allYearData[currentYear].paymentData[nama][i] += sisaJumlah;
                         sisaJumlah = 0;
                         break;
                     }
@@ -749,16 +951,18 @@
         }
 
         function resetAllData() {
-            if (confirm('Apakah Anda yakin ingin reset semua data? Tindakan ini tidak dapat dibatalkan!')) {
-                Object.keys(paymentData).forEach(name => {
-                    paymentData[name] = new Array(12).fill(0);
-                    liburData[name] = new Array(12).fill(false);
-                });
-                
-                renderTable();
-                updateStats();
-                saveData();
-                showAlert('Semua data berhasil direset!', 'success');
+            if (confirm(`Apakah Anda yakin ingin reset semua data tahun ${currentYear}? Tindakan ini tidak dapat dibatalkan!`)) {
+                if (allYearData[currentYear]) {
+                    Object.keys(allYearData[currentYear].paymentData).forEach(name => {
+                        allYearData[currentYear].paymentData[name] = new Array(12).fill(0);
+                        allYearData[currentYear].liburData[name] = new Array(12).fill(false);
+                    });
+                    
+                    renderTable();
+                    updateStats();
+                    saveData();
+                    showAlert(`Semua data tahun ${currentYear} berhasil direset!`, 'success');
+                }
             }
         }
 
@@ -770,14 +974,16 @@
                 return;
             }
 
-            if (confirm(`Apakah Anda yakin ingin reset data ${nama}? Tindakan ini tidak dapat dibatalkan!`)) {
-                paymentData[nama] = new Array(12).fill(0);
-                liburData[nama] = new Array(12).fill(false);
-                
-                renderTable();
-                updateStats();
-                saveData();
-                showAlert(`Data ${nama} berhasil direset!`, 'success');
+            if (confirm(`Apakah Anda yakin ingin reset data ${nama} untuk tahun ${currentYear}? Tindakan ini tidak dapat dibatalkan!`)) {
+                if (allYearData[currentYear].paymentData[nama]) {
+                    allYearData[currentYear].paymentData[nama] = new Array(12).fill(0);
+                    allYearData[currentYear].liburData[nama] = new Array(12).fill(false);
+                    
+                    renderTable();
+                    updateStats();
+                    saveData();
+                    showAlert(`Data ${nama} tahun ${currentYear} berhasil direset!`, 'success');
+                }
             }
         }
 
@@ -798,21 +1004,29 @@
         function updateStats() {
             const container = document.getElementById('statsContainer');
             let totalPendapatan = 0;
+            let totalPenghuni = 0;
 
-            Object.keys(paymentData).forEach(name => {
-                for (let i = 0; i < 12; i++) {
-                    totalPendapatan += paymentData[name][i];
-                }
-            });
+            if (allYearData[currentYear]) {
+                Object.keys(allYearData[currentYear].paymentData).forEach(name => {
+                    for (let i = 0; i < 12; i++) {
+                        totalPendapatan += allYearData[currentYear].paymentData[name][i];
+                    }
+                });
+                totalPenghuni = Object.keys(allYearData[currentYear].paymentData).length;
+            }
 
             container.innerHTML = `
                 <div class="stat-card">
                     <h3>Rp. ${totalPendapatan.toLocaleString('id-ID')}</h3>
-                    <p>Total Pendapatan</p>
+                    <p>Total Pendapatan ${currentYear}</p>
                 </div>
                 <div class="stat-card">
-                    <h3>${Object.keys(paymentData).length}</h3>
-                    <p>Total Penghuni</p>
+                    <h3>${totalPenghuni}</h3>
+                    <p>Total Penghuni ${currentYear}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${availableYears.length}</h3>
+                    <p>Total Tahun Data</p>
                 </div>
             `;
         }
@@ -833,14 +1047,14 @@
             
             html2canvas(table, options).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `tabel_pembayaran_asrama_${new Date().toISOString().split('T')[0]}.png`;
+                link.download = `tabel_pembayaran_asrama_${currentYear}_${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 
-                showAlert('Screenshot tabel berhasil didownload!', 'success');
+                showAlert(`Screenshot tabel tahun ${currentYear} berhasil didownload!`, 'success');
             }).catch(error => {
                 console.error('Error capturing table:', error);
                 showAlert('Gagal mengambil screenshot tabel', 'danger');
@@ -853,6 +1067,18 @@
         document.getElementById('jumlahBayar').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 tambahPembayaran();
+            }
+        });
+
+        document.getElementById('newPenghuniName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                tambahPenghuni();
+            }
+        });
+
+        document.getElementById('newYear').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addNewYear();
             }
         });
 
