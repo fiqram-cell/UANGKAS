@@ -429,8 +429,18 @@
                         <label for="newYear">Tambah Tahun Baru:</label>
                         <input type="number" id="newYear" placeholder="Contoh: 2026" min="2020" max="2050">
                     </div>
+                    <div class="form-control">
+                        <label for="copyFromYear">Salin Data Penghuni Dari:</label>
+                        <select id="copyFromYear">
+                            <option value="">-- Tahun Kosong --</option>
+                        </select>
+                    </div>
                     <button class="btn btn-info" onclick="addNewYear()">Tambah Tahun</button>
                 </div>
+                <p style="font-size: 0.9rem; color: #0c5460; margin-top: 10px;">
+                    💡 <strong>Tips:</strong> Pilih tahun untuk menyalin daftar penghuni (pembayaran akan kosong). 
+                    Pilih "Tahun Kosong" untuk membuat tahun baru tanpa penghuni.
+                </p>
             </div>
 
             <!-- Bagian Manajemen Penghuni -->
@@ -595,14 +605,24 @@
 
         function populateYearSelect() {
             const select = document.getElementById('yearSelect');
+            const copySelect = document.getElementById('copyFromYear');
+            
             select.innerHTML = '';
+            copySelect.innerHTML = '<option value="">-- Tahun Kosong --</option>';
             
             availableYears.sort((a, b) => b - a).forEach(year => {
+                // Populate year selector
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year;
                 if (year === currentYear) option.selected = true;
                 select.appendChild(option);
+                
+                // Populate copy from year selector
+                const copyOption = document.createElement('option');
+                copyOption.value = year;
+                copyOption.textContent = `${year} (${allYearData[year] ? Object.keys(allYearData[year].paymentData || {}).length : 0} penghuni)`;
+                copySelect.appendChild(copyOption);
             });
         }
 
@@ -615,7 +635,10 @@
 
         function addNewYear() {
             const newYearInput = document.getElementById('newYear');
+            const copyFromYearSelect = document.getElementById('copyFromYear');
+            
             const year = parseInt(newYearInput.value);
+            const copyFromYear = parseInt(copyFromYearSelect.value);
             
             if (!year || year < 2020 || year > 2050) {
                 showAlert('Masukkan tahun yang valid (2020-2050)!', 'danger');
@@ -627,14 +650,35 @@
                 return;
             }
             
-            // Tambah tahun baru dengan data kosong
-            allYearData[year] = {
+            // Buat struktur data tahun baru
+            let newYearData = {
                 paymentData: {},
                 liburData: {},
                 penghuniTetap: [],
                 penghuniTamu: []
             };
             
+            // Jika ada tahun yang dipilih untuk disalin
+            if (copyFromYear && allYearData[copyFromYear]) {
+                const sourceData = allYearData[copyFromYear];
+                
+                // Salin daftar penghuni tetap dan tamu
+                newYearData.penghuniTetap = [...sourceData.penghuniTetap];
+                newYearData.penghuniTamu = [...sourceData.penghuniTamu];
+                
+                // Buat data pembayaran kosong untuk semua penghuni
+                Object.keys(sourceData.paymentData).forEach(name => {
+                    newYearData.paymentData[name] = new Array(12).fill(0);
+                    newYearData.liburData[name] = new Array(12).fill(false);
+                });
+                
+                showAlert(`Tahun ${year} berhasil ditambahkan dengan ${Object.keys(newYearData.paymentData).length} penghuni dari tahun ${copyFromYear}!`, 'success');
+            } else {
+                showAlert(`Tahun ${year} berhasil ditambahkan (kosong)!`, 'success');
+            }
+            
+            // Tambahkan ke database
+            allYearData[year] = newYearData;
             availableYears.push(year);
             currentYear = year;
             
@@ -645,7 +689,7 @@
             saveData();
             
             newYearInput.value = '';
-            showAlert(`Tahun ${year} berhasil ditambahkan!`, 'success');
+            copyFromYearSelect.value = '';
         }
 
         function populateNameSelect() {
