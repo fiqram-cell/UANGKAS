@@ -458,8 +458,28 @@
                             <option value="tamu">Penghuni Tamu (Rp 50k)</option>
                         </select>
                     </div>
+                    <div class="form-control">
+                        <label for="joinMonth">Mulai Bulan:</label>
+                        <select id="joinMonth">
+                            <option value="0">Januari</option>
+                            <option value="1">Februari</option>
+                            <option value="2">Maret</option>
+                            <option value="3">April</option>
+                            <option value="4">Mei</option>
+                            <option value="5">Juni</option>
+                            <option value="6">Juli</option>
+                            <option value="7">Agustus</option>
+                            <option value="8">September</option>
+                            <option value="9">Oktober</option>
+                            <option value="10">November</option>
+                            <option value="11">Desember</option>
+                        </select>
+                    </div>
                     <button class="btn btn-info" onclick="tambahPenghuni()">Tambah Penghuni</button>
                 </div>
+                <p style="font-size: 0.9rem; color: #004085; margin-top: 10px;">
+                    💡 <strong>Tips:</strong> Pilih bulan mulai penghuni bergabung. Pembayaran otomatis akan dimulai dari bulan tersebut.
+                </p>
             </div>
 
             <!-- Bagian Pembayaran -->
@@ -559,6 +579,7 @@
                 'Muh Ering': [0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0]
             },
             liburData: {},
+            joinMonth: {}, // Bulan bergabung untuk setiap penghuni
             penghuniTetap: [
                 'Aan', 'Adam', 'Arul', 'Arzad', 'Asraf', 'Erfan', 'Fajrin', 
                 'Fathurrahman', 'Fiqram', 'Hamdani', 'Ipping',
@@ -588,11 +609,16 @@
             } else {
                 // Inisialisasi data default untuk 2025
                 allYearData[2025] = JSON.parse(JSON.stringify(defaultData2025));
-                // Inisialisasi libur data
+                // Inisialisasi libur data dan join month
                 Object.keys(allYearData[2025].paymentData).forEach(name => {
                     allYearData[2025].liburData[name] = new Array(12).fill(false);
+                    allYearData[2025].joinMonth[name] = 0; // Default mulai Januari untuk data existing
                 });
             }
+
+            // Set bulan saat ini sebagai default untuk join month
+            const currentMonth = new Date().getMonth();
+            document.getElementById('joinMonth').value = currentMonth;
 
             populateYearSelect();
             changeYear();
@@ -654,6 +680,7 @@
             let newYearData = {
                 paymentData: {},
                 liburData: {},
+                joinMonth: {},
                 penghuniTetap: [],
                 penghuniTamu: []
             };
@@ -670,6 +697,7 @@
                 Object.keys(sourceData.paymentData).forEach(name => {
                     newYearData.paymentData[name] = new Array(12).fill(0);
                     newYearData.liburData[name] = new Array(12).fill(false);
+                    newYearData.joinMonth[name] = sourceData.joinMonth[name] || 0;
                 });
                 
                 showAlert(`Tahun ${year} berhasil ditambahkan dengan ${Object.keys(newYearData.paymentData).length} penghuni dari tahun ${copyFromYear}!`, 'success');
@@ -711,9 +739,11 @@
         function tambahPenghuni() {
             const nameInput = document.getElementById('newPenghuniName');
             const typeSelect = document.getElementById('penghuniType');
+            const joinMonthSelect = document.getElementById('joinMonth');
             
             const name = nameInput.value.trim();
             const type = typeSelect.value;
+            const joinMonth = parseInt(joinMonthSelect.value);
             
             if (!name) {
                 showAlert('Masukkan nama penghuni!', 'danger');
@@ -725,6 +755,7 @@
                 allYearData[currentYear] = {
                     paymentData: {},
                     liburData: {},
+                    joinMonth: {},
                     penghuniTetap: [],
                     penghuniTamu: []
                 };
@@ -738,6 +769,7 @@
             // Tambah penghuni baru
             allYearData[currentYear].paymentData[name] = new Array(12).fill(0);
             allYearData[currentYear].liburData[name] = new Array(12).fill(false);
+            allYearData[currentYear].joinMonth[name] = joinMonth; // Simpan bulan bergabung
             
             if (type === 'tetap') {
                 allYearData[currentYear].penghuniTetap.push(name);
@@ -751,7 +783,7 @@
             saveData();
             
             nameInput.value = '';
-            showAlert(`Penghuni ${name} berhasil ditambahkan!`, 'success');
+            showAlert(`Penghuni ${name} berhasil ditambahkan! Mulai dari ${months[joinMonth]} ${currentYear}`, 'success');
         }
 
         function getTargetAmount(name, monthIndex) {
@@ -858,7 +890,7 @@
         function createPersonRow(name) {
             const row = document.createElement('tr');
             
-            // Kolom nama (tanpa tombol hapus)
+            // Kolom nama
             const nameCell = document.createElement('td');
             nameCell.className = 'nama-col';
             nameCell.textContent = name;
@@ -957,10 +989,14 @@
                 return;
             }
 
-            // Proses pembayaran otomatis
+            // Dapatkan bulan bergabung penghuni
+            const joinMonth = allYearData[currentYear].joinMonth[nama] || 0;
+
+            // Proses pembayaran otomatis mulai dari bulan bergabung
             let sisaJumlah = jumlah;
 
-            for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
+            // Mulai dari bulan bergabung
+            for (let i = joinMonth; i < 12 && sisaJumlah > 0; i++) {
                 const currentAmount = allYearData[currentYear].paymentData[nama][i];
                 const target = getTargetAmount(nama, i);
                 const needed = target - currentAmount;
@@ -972,14 +1008,30 @@
                 }
             }
 
-            // Jika masih ada sisa, tambahkan ke bulan yang sudah lunas
+            // Jika masih ada sisa dan semua bulan dari join month sudah terisi
+            // Mulai dari bulan bergabung lagi untuk menambahkan kelebihan
             if (sisaJumlah > 0) {
-                for (let i = 0; i < 12 && sisaJumlah > 0; i++) {
+                for (let i = joinMonth; i < 12 && sisaJumlah > 0; i++) {
                     const target = getTargetAmount(nama, i);
                     if (allYearData[currentYear].paymentData[nama][i] >= target) {
                         allYearData[currentYear].paymentData[nama][i] += sisaJumlah;
                         sisaJumlah = 0;
                         break;
+                    }
+                }
+            }
+
+            // Jika masih ada sisa, distribusikan ke bulan sebelum join month (untuk kasus khusus)
+            if (sisaJumlah > 0 && joinMonth > 0) {
+                for (let i = 0; i < joinMonth && sisaJumlah > 0; i++) {
+                    const currentAmount = allYearData[currentYear].paymentData[nama][i];
+                    const target = getTargetAmount(nama, i);
+                    const needed = target - currentAmount;
+
+                    if (needed > 0) {
+                        const toAdd = Math.min(sisaJumlah, needed);
+                        allYearData[currentYear].paymentData[nama][i] += toAdd;
+                        sisaJumlah -= toAdd;
                     }
                 }
             }
@@ -991,7 +1043,8 @@
             jumlahInput.value = '';
             namaSelect.value = '';
             
-            showAlert(`Pembayaran Rp. ${jumlah.toLocaleString('id-ID')} untuk ${nama} berhasil ditambahkan!`, 'success');
+            const joinMonthName = months[joinMonth];
+            showAlert(`Pembayaran Rp. ${jumlah.toLocaleString('id-ID')} untuk ${nama} berhasil ditambahkan! (Mulai dari ${joinMonthName})`, 'success');
         }
 
         function resetAllData() {
