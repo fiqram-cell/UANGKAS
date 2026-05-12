@@ -31,7 +31,6 @@ library(dendextend)   # untuk hierarchical clustering
 # 1. LOAD & PERSIAPAN DATA
 # =============================================================================
 
-# -- Ganti path di bawah sesuai lokasi file CSV di komputer kamu --
 tourism  <- read.csv("tourism_with_id.csv")
 ratings  <- read.csv("tourism_rating.csv")
 users    <- read.csv("user.csv")
